@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { MockUserRepository } from '../testing/mock/user.repository.mock';
-import { MockHashService } from '../testing/mock/hash.service.mock';
-import { HashService } from '@/shared/hash/hash.service';
 import { UserRepository } from '../repository/user.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserCreateFixture } from '../testing/fixture/user-create.fixture';
@@ -16,7 +14,6 @@ describe('UserService', () => {
       providers: [
         UserService,
         { provide: UserRepository, useValue: MockUserRepository },
-        { provide: HashService, useValue: MockHashService },
       ],
     }).compile();
 
@@ -33,11 +30,7 @@ describe('UserService', () => {
       const result = await userService.create(data);
 
       expect(result).toEqual(UserResponseFixture);
-      expect(MockHashService.hashPassword).toHaveBeenCalledWith(data.password);
-      expect(MockUserRepository.create).toHaveBeenCalledWith({
-        ...data,
-        password: `hashed-password`,
-      });
+      expect(MockUserRepository.create).toHaveBeenCalledWith(data);
     });
   });
 });
