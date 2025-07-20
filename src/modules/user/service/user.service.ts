@@ -3,6 +3,7 @@ import { UserRepository } from '../repository/user.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from '../dto/user-response.dto';
+import { UserInternalDto } from '../dto/user-internal.dto';
 
 @Injectable()
 export class UserService {
@@ -13,11 +14,11 @@ export class UserService {
     return plainToInstance(UserResponseDto, user);
   }
 
-  async getByEmail(email: string): Promise<UserResponseDto> {
+  async getByEmail(email: string): Promise<UserInternalDto> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) throw new NotFoundException('user not found');
 
-    return plainToInstance(UserResponseDto, user);
+    return plainToInstance(UserInternalDto, user);
   }
 
   async existsByEmail(email: string): Promise<boolean> {
