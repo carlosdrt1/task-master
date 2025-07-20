@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserRepository } from '../repository/user.repository';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { plainToInstance } from 'class-transformer';
@@ -14,9 +14,9 @@ export class UserService {
     return plainToInstance(UserResponseDto, user);
   }
 
-  async getByEmail(email: string): Promise<UserInternalDto> {
+  async getByEmail(email: string): Promise<UserInternalDto | null> {
     const user = await this.userRepository.findByEmail(email);
-    if (!user) throw new NotFoundException('user not found');
+    if (!user) return null;
 
     return plainToInstance(UserInternalDto, user);
   }
