@@ -1,14 +1,15 @@
-import { Exclude } from 'class-transformer';
+import { Expose } from 'class-transformer';
 
 export class UserResponseDto {
   id: string;
   name: string;
   email: string;
+
+  @Expose({ groups: ['internal'] })
+  password: string;
+
   createdAt: Date;
   updatedAt: Date;
-
-  @Exclude()
-  password: string;
 
   constructor(partial: Partial<UserResponseDto>) {
     Object.assign(this, partial);
