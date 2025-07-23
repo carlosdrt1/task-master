@@ -9,7 +9,13 @@ import { UserResponse } from './interfaces/user-response.interface';
 describe('Auth (e2e)', () => {
   let app: INestApplication<App>;
 
-  beforeEach(async () => {
+  const user = {
+    name: 'user',
+    email: `emailAuth_${Date.now()}@email.com`,
+    password: 'password',
+  };
+
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -19,17 +25,11 @@ describe('Auth (e2e)', () => {
     await app.init();
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 
   describe('/auth/register (POST)', () => {
-    const user = {
-      name: 'user',
-      email: 'email@email.com',
-      password: 'password',
-    };
-
     it('should create an valid user', async () => {
       const res = await request(app.getHttpServer())
         .post('/auth/register')
@@ -44,7 +44,7 @@ describe('Auth (e2e)', () => {
       expect(body).toHaveProperty('updatedAt');
     });
 
-    it('should return a error with a message that email has already been registered', async () => {
+    it('should return an 409 if the email is already registered', async () => {
       const res = await request(app.getHttpServer())
         .post('/auth/register')
         .send(user)
@@ -56,7 +56,7 @@ describe('Auth (e2e)', () => {
       expect(body.message).toBe('email already registered');
     });
 
-    it('should return a error with messages if email is invalid', async () => {
+    it('should return an 400 if email is invalid', async () => {
       const res = await request(app.getHttpServer())
         .post('/auth/register')
         .send({ ...user, email: 'wrongmail.com' })
@@ -68,7 +68,7 @@ describe('Auth (e2e)', () => {
       expect(body.message).toEqual(['email must be an email']);
     });
 
-    it('should return a error with messages if password is shorter than 8 characters', async () => {
+    it('should return 400 if password is shorter than 8 characters', async () => {
       const res = await request(app.getHttpServer())
         .post('/auth/register')
         .send({ ...user, password: 'pass' })
@@ -88,8 +88,8 @@ describe('Auth (e2e)', () => {
       const res = await request(app.getHttpServer())
         .post('/auth/login')
         .send({
-          email: 'email@email.com',
-          password: 'password',
+          email: user.email,
+          password: user.password,
         })
         .expect(200);
       const cookies = res.get('Set-Cookie');
@@ -98,10 +98,10 @@ describe('Auth (e2e)', () => {
       expect(cookies![0].startsWith('token=')).toBe(true);
     });
 
-    it('should return a error with message if email is incorrect', async () => {
+    it('should return 401 when email is incorrect', async () => {
       const res = await request(app.getHttpServer())
         .post('/auth/login')
-        .send({ email: 'wrong@mail.com', password: 'password' })
+        .send({ email: 'wrong@mail.com', password: 'somePassword' })
         .expect(401);
       const body = res.body as ErrorBodyResponse;
 
@@ -110,10 +110,10 @@ describe('Auth (e2e)', () => {
       expect(body.message).toEqual('invalid credentials');
     });
 
-    it('should return a error with message if password is incorrect', async () => {
+    it('should return 401 if password is incorrect', async () => {
       const res = await request(app.getHttpServer())
         .post('/auth/login')
-        .send({ email: 'email@mail.com', password: 'wrongpass' })
+        .send({ email: user.email, password: 'wrongpass' })
         .expect(401);
       const body = res.body as ErrorBodyResponse;
 
