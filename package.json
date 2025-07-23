@@ -17,8 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e:clean": "dotenv -e .env.test -- cross-env NODE_ENV=test npx prisma migrate reset --force --skip-seed",
-    "test:e2e": "npm run test:e2e:clean && dotenv -e .env.test -- cross-env NODE_ENV=test jest --config ./test/jest-e2e.json"
+    "test:e2e:clean": "dotenv -e .env.test -- npx prisma migrate reset --force --skip-seed",
+    "test:e2e": "npm run test:e2e:clean && dotenv -e .env.test -- jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -26,6 +26,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.12.0",
     "argon2": "^0.43.1",
     "class-transformer": "^0.5.1",
@@ -47,7 +48,6 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
-    "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

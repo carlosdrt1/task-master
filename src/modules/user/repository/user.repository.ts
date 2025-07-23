@@ -3,6 +3,7 @@ import { IUserRepository } from './user.repository.interface';
 import { User } from '@prisma/client';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { PrismaService } from '@/database/prisma/prisma.service';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -19,5 +20,17 @@ export class UserRepository implements IUserRepository {
   async existsByEmail(email: string): Promise<boolean> {
     const count = await this.prismaService.user.count({ where: { email } });
     return count > 0;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    return this.prismaService.user.findUnique({ where: { id } });
+  }
+
+  async update(id: string, data: UpdateUserDto): Promise<User> {
+    return this.prismaService.user.update({ where: { id }, data });
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prismaService.user.delete({ where: { id } });
   }
 }
