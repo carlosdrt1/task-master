@@ -5,6 +5,7 @@ import { App } from 'supertest/types';
 import * as request from 'supertest';
 import { ErrorBodyResponse } from './interfaces/response-error.interface';
 import { UserResponse } from './interfaces/user-response.interface';
+import { registerLoginUser } from './helpers/register-login.helper';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication<App>;
@@ -120,6 +121,21 @@ describe('Auth (e2e)', () => {
       expect(body.statusCode).toBe(401);
       expect(body.error).toBe('Unauthorized');
       expect(body.message).toEqual('invalid credentials');
+    });
+  });
+
+  describe('auth/logout (DELETE)', () => {
+    it('should remove the authcookie of the user logged', async () => {
+      const { authCookies } = await registerLoginUser(app);
+
+      const res = await request(app.getHttpServer())
+        .delete('/auth/logout')
+        .set('Cookie', authCookies!)
+        .expect(200);
+
+      expect(res.get('Set-Cookie')).toContain(
+        'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+      );
     });
   });
 });
