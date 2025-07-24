@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Post, Res } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { CreateUserDto } from '@/modules/user/dto/create-user.dto';
 import { LoginDto } from '../dto/login.dto';
@@ -18,5 +18,11 @@ export class AuthController {
     const token = await this.authService.login(body);
     res.cookie('token', token);
     return res.status(200).json({ message: 'login successful' });
+  }
+
+  @Delete('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie('token');
+    return res.status(200).json({ message: 'logout efetuado com sucesso' });
   }
 }

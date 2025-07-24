@@ -7,6 +7,7 @@ import { ErrorBodyResponse } from './interfaces/response-error.interface';
 import { PrismaClient } from '@prisma/client';
 import { UserResponse } from './interfaces/user-response.interface';
 import * as cookieParser from 'cookie-parser';
+import { registerLoginUser } from './helpers/register-login.helper';
 
 describe('User (e2e)', () => {
   const prisma = new PrismaClient();
@@ -28,7 +29,7 @@ describe('User (e2e)', () => {
     await app.close();
   });
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     await prisma.user.deleteMany();
   });
 
@@ -92,7 +93,7 @@ describe('User (e2e)', () => {
 
       expect(body.statusCode).toBe(400);
       expect(body.error).toBe('Bad Request');
-      expect(body.message).toEqual(['email must be email']);
+      expect(body.message).toEqual(['email must be an email']);
     });
 
     it('should return 409 if the email passed is already registered', async () => {
@@ -124,25 +125,3 @@ describe('User (e2e)', () => {
     });
   });
 });
-
-async function registerLoginUser(app: INestApplication<App>) {
-  const userData = {
-    name: 'user',
-    email: `user_${Date.now()}@email.com`,
-    password: 'password',
-  };
-
-  const resRegister = await request(app.getHttpServer())
-    .post('/auth/register')
-    .send(userData)
-    .expect(201);
-
-  const user = resRegister.body as UserResponse;
-
-  const res = await request(app.getHttpServer())
-    .post('/auth/login')
-    .send({ email: userData.email, password: userData.password })
-    .expect(200);
-
-  return { authCookies: res.get('Set-Cookie'), user };
-}
