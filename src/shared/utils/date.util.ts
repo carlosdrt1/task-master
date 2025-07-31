@@ -1,4 +1,5 @@
 export function zeroTimeDate(date: Date): Date {
-  date.setHours(0, 0, 0, 0);
-  return date;
+  const zeroDate = new Date(date);
+  zeroDate.setHours(0, 0, 0, 0);
+  return zeroDate;
 }
