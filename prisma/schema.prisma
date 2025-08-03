@@ -27,8 +27,8 @@ model Task {
   id          String     @id @default(uuid()) @db.Uuid
   title       String
   description String
-  start       DateTime
-  end         DateTime
+  start       DateTime   @db.Date()
+  end         DateTime   @db.Date()
   icon        String     @default("task")
   color       String     @default("#006EE9")
   userId      String     @db.Uuid
