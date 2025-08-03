@@ -29,13 +29,22 @@ describe('TaskService', () => {
 
   describe('create a task', () => {
     it('should create a task with the data send', async () => {
-      const result = await taskService.create(taskCreateFixture, 'any id');
+      const result = await taskService.create(taskCreateFixture, 'any-id');
 
       expect(result).toEqual(taskResponseFixture);
       expect(taskRepositoryMock.create).toHaveBeenCalledWith({
         ...taskCreateFixture,
-        userId: 'any id',
+        userId: 'any-id',
       });
+    });
+  });
+
+  describe('get all tasks', () => {
+    it('should return an array of tasks', async () => {
+      const result = await taskService.getAll('any-id');
+
+      expect(Array.isArray(result)).toBeTruthy();
+      expect(taskRepositoryMock.findAll).toHaveBeenCalledWith('any-id');
     });
   });
 });
