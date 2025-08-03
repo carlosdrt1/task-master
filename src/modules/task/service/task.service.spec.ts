@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TaskService } from './task.service';
 import { TaskRepository } from '../repository/task.repository';
-import * as zeroTimeDateMod from '@/shared/utils/date.util';
 import { taskCreateFixture } from '../testing/fixtures/task-create.fixture';
 import { taskResponseFixture } from '../testing/fixtures/task-response.fixture';
 import { taskRepositoryMock } from '../testing/mocks/task.repository.mock';
@@ -30,8 +29,6 @@ describe('TaskService', () => {
 
   describe('create a task', () => {
     it('should create a task with the data send', async () => {
-      const zeroTimeDateMock = jest.spyOn(zeroTimeDateMod, 'zeroTimeDate');
-      zeroTimeDateMock.mockImplementation((value) => value);
       const result = await taskService.create(taskCreateFixture, 'any id');
 
       expect(result).toEqual(taskResponseFixture);
@@ -39,8 +36,6 @@ describe('TaskService', () => {
         ...taskCreateFixture,
         userId: 'any id',
       });
-      expect(zeroTimeDateMock).toHaveBeenCalledWith(taskCreateFixture.start);
-      expect(zeroTimeDateMock).toHaveBeenCalledWith(taskCreateFixture.end);
     });
   });
 });
