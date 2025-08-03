@@ -6,8 +6,10 @@ import * as request from 'supertest';
 import { ErrorBodyResponse } from './interfaces/response-error.interface';
 import { UserResponse } from './interfaces/user-response.interface';
 import { registerLoginUser } from './helpers/register-login.helper';
+import { PrismaClient } from '@prisma/client';
 
 describe('Auth (e2e)', () => {
+  const prisma = new PrismaClient();
   let app: INestApplication<App>;
 
   const user = {
@@ -22,11 +24,16 @@ describe('Auth (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
   afterAll(async () => {
+    await prisma.user.deleteMany();
     await app.close();
   });
 
