@@ -29,4 +29,11 @@ export class TaskRepository implements ITaskRepository {
       },
     });
   }
+
+  async findAll(userId: string): Promise<TaskWithTodoList[]> {
+    return this.prismaService.task.findMany({
+      where: { userId },
+      include: { todoItems: true },
+    });
+  }
 }

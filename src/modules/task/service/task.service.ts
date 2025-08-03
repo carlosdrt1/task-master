@@ -16,4 +16,8 @@ export class TaskService {
 
     return this.taskRepository.create(inputData);
   }
+
+  async getAll(userId: string) {
+    return this.taskRepository.findAll(userId);
+  }
 }

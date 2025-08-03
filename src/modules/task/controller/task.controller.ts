@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { TaskService } from '../service/task.service';
 import { CreateTaskDto } from '../dto/create-task.dto';
 import { AuthGuard } from '@/modules/auth/guards/auth.guard';
@@ -12,5 +12,10 @@ export class TaskController {
   @Post()
   async create(@Req() req: RequestAuth, @Body() body: CreateTaskDto) {
     return this.taskService.create(body, req.userId);
+  }
+
+  @Get()
+  async index(@Req() req: RequestAuth) {
+    return this.taskService.getAll(req.userId);
   }
 }
