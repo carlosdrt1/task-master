@@ -99,4 +99,49 @@ describe('Task (e2e)', () => {
       });
     });
   });
+
+  describe('/tasks (GET)', () => {
+    it('should return an array of tasks created by the user', async () => {
+      const task = {
+        title: 'any-title',
+        description: 'any-description',
+        start: '2025-08-03',
+        end: '2025-08-20',
+        todoItems: ['item', 'item2', 'item3'],
+      };
+      const { authCookies } = await registerLoginUser(app);
+
+      await Promise.all([
+        await request(app.getHttpServer())
+          .post('/tasks')
+          .send(task)
+          .set('Cookie', authCookies!)
+          .expect(201),
+        await request(app.getHttpServer())
+          .post('/tasks')
+          .send(task)
+          .set('Cookie', authCookies!)
+          .expect(201),
+      ]);
+
+      const res = await request(app.getHttpServer())
+        .get('/tasks')
+        .set('Cookie', authCookies!)
+        .expect(200);
+
+      const body = res.body as TaskWithTodoList[];
+
+      expect(Array.isArray(body)).toBeTruthy();
+    });
+
+    it('should return 401 error when no auth token is provided', async () => {
+      const res = await request(app.getHttpServer()).get('/tasks').expect(401);
+
+      expect(res.body).toStrictEqual({
+        statusCode: 401,
+        error: 'Unauthorized',
+        message: 'No token provided',
+      });
+    });
+  });
 });
