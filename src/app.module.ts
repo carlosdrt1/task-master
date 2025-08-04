@@ -4,11 +4,13 @@ import { AppService } from './app.service';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { TaskModule } from './modules/task/task.module';
 
 @Module({
   imports: [
     UserModule,
     AuthModule,
+    TaskModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV

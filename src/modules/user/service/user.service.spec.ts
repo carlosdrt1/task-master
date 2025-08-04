@@ -11,7 +11,7 @@ import { ConflictException } from '@nestjs/common';
 describe('UserService', () => {
   let userService: UserService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,

@@ -19,18 +19,19 @@ describe('User (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(
+      new ValidationPipe({
+        transform: true,
+      }),
+    );
     app.use(cookieParser());
 
     await app.init();
   });
 
   afterAll(async () => {
-    await app.close();
-  });
-
-  beforeAll(async () => {
     await prisma.user.deleteMany();
+    await app.close();
   });
 
   it('should return 401 error when no auth token is provided', async () => {

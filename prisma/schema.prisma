@@ -20,4 +20,28 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  tasks     Task[]
+}
+
+model Task {
+  id          String     @id @default(uuid()) @db.Uuid
+  title       String
+  description String
+  start       DateTime   @db.Date()
+  end         DateTime   @db.Date()
+  icon        String     @default("task")
+  color       String     @default("#006EE9")
+  userId      String     @db.Uuid
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  todoItems   TodoItem[]
+}
+
+model TodoItem {
+  id          Int     @id @default(autoincrement())
+  description String
+  marked      Boolean @default(false)
+  taskId      String  @db.Uuid
+  task        Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }

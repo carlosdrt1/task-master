@@ -14,7 +14,7 @@ import { LoginFixture } from '../testing/fixture/login.fixture';
 describe('AuthService', () => {
   let authService: AuthService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
